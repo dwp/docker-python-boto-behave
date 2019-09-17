@@ -4,3 +4,4 @@ WORKDIR /tmp
 COPY ./requirements.txt /tmp
 RUN apk update && apk upgrade && apk add jq
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN echo "{\"test\": 1}" | jq -r
