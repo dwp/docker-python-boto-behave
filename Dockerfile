@@ -17,4 +17,4 @@ RUN chown ${USER_NAME}:${GROUP_NAME} . -R
 
 USER ${USER_NAME}
 RUN pip install --user --no-cache-dir -r /tmp/requirements.txt
-ENV PATH="/home/botobehave/.local/bin:${PATH}"
+ENV PATH="/home/${USER_NAME}/.local/bin:${PATH}"
