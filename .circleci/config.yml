@@ -107,8 +107,8 @@ workflows:
     jobs:
     - build
     - snyk-pr:
-    requires:
-      - build
+        requires:
+          - build
     filters:
       branches:
         ignore: master
