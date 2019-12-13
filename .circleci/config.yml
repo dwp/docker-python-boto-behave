@@ -109,9 +109,9 @@ workflows:
     - snyk-pr:
         requires:
           - build
-    filters:
-      branches:
-        ignore: master
+        filters:
+          branches:
+            ignore: master
     - snyk-master:
         requires:
           - build
