@@ -35,13 +35,17 @@ jobs:
       - run:
           command: 'docker build -t $IMAGE_NAME:latest .'
           name: Build Docker image
-      - snyk/scan:
-          organization: dwp-dataworks
-          docker-image-name: '$IMAGE_NAME:latest'
-          severity-threshold: high
-          target-file: Dockerfile
-          monitor-on-build: false
-          project: '${CIRCLE_PROJECT_REPONAME}/pr-docker'
+
+      - run:
+          command: 'snyk ignore --id=npm:SNYK-LINUX-JQ-105334 --expiry=2020-01-20 --reason="Test_exception"'
+          name: Test exception
+#      - snyk/scan:
+#          organization: dwp-dataworks
+#          docker-image-name: '$IMAGE_NAME:latest'
+#          severity-threshold: high
+#          target-file: Dockerfile
+#          monitor-on-build: false
+#          project: '${CIRCLE_PROJECT_REPONAME}/pr-docker'
 
   snyk-master:
     executor: docker-publisher
