@@ -1,4 +1,8 @@
 version: 2.1
+
+orbs:
+  snyk: snyk/snyk@0.0.8
+
 executors:
   docker-publisher:
     environment:
@@ -22,6 +26,38 @@ jobs:
           root: .
           paths:
             - ./image.tar
+
+  snyk-pr:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          command: 'docker build -t $IMAGE_NAME:latest .'
+          name: Build Docker image
+      - snyk/scan:
+          organization: dwp-dataworks
+          docker-image-name: '$IMAGE_NAME:latest'
+          severity-threshold: high
+          target-file: Dockerfile
+          monitor-on-build: false
+          project: '${CIRCLE_PROJECT_REPONAME}/pr-docker'
+
+  snyk-master:
+    executor: docker-publisher
+    steps:
+      - checkout
+      - setup_remote_docker
+      - run:
+          command: 'docker build -t $IMAGE_NAME:latest .'
+          name: Build Docker image
+      - snyk/scan:
+          organization: dwp-dataworks
+          docker-image-name: '$IMAGE_NAME:latest'
+          severity-threshold: high
+          target-file: Dockerfile
+          project: '${CIRCLE_PROJECT_REPONAME}/${CIRCLE_BRANCH}-docker'
+
   publish-latest:
     executor: docker-publisher
     steps:
@@ -47,6 +83,7 @@ jobs:
             docker push $IMAGE_NAME:$MAJOR
             docker push $IMAGE_NAME:$MAJOR.$MINOR
             docker push $IMAGE_NAME:$MAJOR.$MINOR.$PATCH
+
   publish-github-release:
     docker:
     - image: cibuilds/github:0.10
@@ -69,6 +106,18 @@ workflows:
   build-and-deploy:
     jobs:
     - build
+    - snyk-pr:
+    requires:
+      - build
+    filters:
+      branches:
+        ignore: master
+    - snyk-master:
+        requires:
+          - build
+        filters:
+          branches:
+            only: master
     - publish-github-release:
         requires:
         - build
