@@ -4,5 +4,5 @@ WORKDIR /tmp
 
 COPY assume-role /
 COPY ./requirements.txt /tmp
-RUN apk update && apk upgrade && apk add jq build-base
+RUN apk update && apk upgrade && apk add jq build-base coreutils
 RUN pip install --no-cache-dir -r /tmp/requirements.txt
