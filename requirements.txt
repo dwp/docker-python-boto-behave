@@ -6,3 +6,4 @@ pandas >= 1.0.5
 cryptography >= 3.3.1
 aws-requests-auth >= 0.4.3
 requests >= 2.25.1
+rsa>=4.7 # not directly required, pinned by Snyk to avoid a vulnerability
